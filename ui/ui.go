@@ -217,6 +217,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		newSections, fetchSectionsCmds := m.fetchAllViewSections()
 		m.setCurrentViewSections(newSections)
 		cmds = append(cmds, fetchSectionsCmds, fetchUser)
+		if m.ctx.Config.Defaults.AutoRefreshInterval > 0 {
+			cmds = append(cmds, tickEvery(*m.ctx.Config))
+		}
 
 	case userFetchedMsg:
 		m.ctx.User = msg.user
@@ -264,6 +267,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case constants.ErrMsg:
 		m.ctx.Error = msg.Err
+
+	case autoRefreshInterval:
+		currSection.ResetFilters()
+		cmds = append(cmds, currSection.FetchSectionRows())
+		if msg.Config.Defaults.AutoRefreshInterval > 0 {
+			cmds = append(cmds, tickEvery(msg.Config))
+		}
 	}
 
 	m.syncProgramContext()
@@ -528,4 +538,14 @@ func fetchUser() tea.Msg {
 	return userFetchedMsg{
 		user: user,
 	}
+}
+
+type autoRefreshInterval struct {
+	Config config.Config
+}
+
+func tickEvery(cfg config.Config) tea.Cmd {
+	return tea.Every(time.Duration(cfg.Defaults.AutoRefreshInterval)*time.Second, func(t time.Time) tea.Msg {
+		return autoRefreshInterval{cfg}
+	})
 }

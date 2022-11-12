@@ -86,11 +86,12 @@ type LayoutConfig struct {
 }
 
 type Defaults struct {
-	Preview     PreviewConfig `yaml:"preview"`
-	PrsLimit    int           `yaml:"prsLimit"`
-	IssuesLimit int           `yaml:"issuesLimit"`
-	View        ViewType      `yaml:"view"`
-	Layout      LayoutConfig  `yaml:"layout,omitempty"`
+	Preview             PreviewConfig `yaml:"preview"`
+	PrsLimit            int           `yaml:"prsLimit"`
+	IssuesLimit         int           `yaml:"issuesLimit"`
+	View                ViewType      `yaml:"view"`
+	Layout              LayoutConfig  `yaml:"layout,omitempty"`
+	AutoRefreshInterval int           `yaml:"autoRefreshInterval,omitempty"`
 }
 
 type Keybinding struct {
@@ -199,6 +200,7 @@ func (parser ConfigParser) getDefaultConfig() Config {
 					},
 				},
 			},
+			AutoRefreshInterval: 0,
 		},
 		PRSections: []PrsSectionConfig{
 			{
