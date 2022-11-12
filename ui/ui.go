@@ -217,7 +217,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		newSections, fetchSectionsCmds := m.fetchAllViewSections()
 		m.setCurrentViewSections(newSections)
 		cmds = append(cmds, fetchSectionsCmds, fetchUser)
-		if m.ctx.Config.Defaults.AutoRefreshInterval > 0 {
+		if m.ctx.Config.Defaults.AutoRefreshInterval > 2 {
 			cmds = append(cmds, tickEvery(*m.ctx.Config))
 		}
 
@@ -271,7 +271,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case autoRefreshInterval:
 		currSection.ResetFilters()
 		cmds = append(cmds, currSection.FetchSectionRows())
-		if msg.Config.Defaults.AutoRefreshInterval > 0 {
+		if msg.Config.Defaults.AutoRefreshInterval > 2 {
 			cmds = append(cmds, tickEvery(msg.Config))
 		}
 	}
